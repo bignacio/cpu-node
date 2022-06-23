@@ -48,7 +48,11 @@ void printCurrentCoreUsage() {
 
 bool getCoreNUMANode(unsigned int coreNum, const cpu_set_t* mask, unsigned int* numaNode){
     if(CPU_ISSET_S(coreNum, CPUSetMaskSize, mask)){
-        int result = sched_setaffinity(0, CPUSetMaskSize, mask);
+        cpu_set_t currentCoreMask;
+        CPU_ZERO(&currentCoreMask);
+        CPU_SET_S(coreNum, CPUSetMaskSize, &currentCoreMask);
+
+        int result = sched_setaffinity(0, CPUSetMaskSize, &currentCoreMask);
 
         if(result != 0){
             return false;
